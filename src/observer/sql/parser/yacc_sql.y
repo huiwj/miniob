@@ -55,6 +55,11 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 
 //标识tokens
 %token  SEMICOLON
+        SUM_F
+        AVG_F
+        MAX_F
+        MIN_F
+        COUNT_F
         CREATE
         DROP
         TABLE
@@ -117,6 +122,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
   char *                            string;
   int                               number;
   float                             floats;
+  AggrOp                            aggr_op;
 }
 
 %token <number> NUMBER
@@ -164,6 +170,7 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <sql_node>            help_stmt
 %type <sql_node>            exit_stmt
 %type <sql_node>            command_wrapper
+%type <aggr_op>             aggr_op
 // commands should be a list but I use a single command instead
 %type <sql_node>            commands
 
@@ -532,7 +539,20 @@ rel_attr:
       free($1);
       free($3);
     }
+    |aggr_op LBRACE rel_attr RBRACE{
+      $$=$3;
+      $$->aggregation=$1;
+    }
     ;
+  
+  aggr_op:
+     SUM_F { $$=AGGR_SUM; }
+     |AVG_F { $$=AGGR_AVG; }
+     |MAX_F { $$=AGGR_MAX; }
+     |MIN_F { $$=AGGR_MIN; }
+     |COUNT_F { $$=AGGR_COUNT; }
+     ;
+
 
 attr_list:
     /* empty */

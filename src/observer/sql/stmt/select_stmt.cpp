@@ -119,10 +119,13 @@ RC SelectStmt::create(Db *db, const SelectSqlNode &select_sql, Stmt *&stmt)
         return RC::SCHEMA_FIELD_MISSING;
       }
 
-      query_fields.push_back(Field(table, field_meta));
+      const AggrOp aggregation_=relation_attr.aggregation;
+      
+      query_fields.push_back(Field(table,field_meta,aggregation_));
     }
   }
 
+  
   LOG_INFO("got %d tables in from stmt and %d fields in query stmt", tables.size(), query_fields.size());
 
   Table *default_table = nullptr;

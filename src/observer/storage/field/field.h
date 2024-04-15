@@ -25,11 +25,13 @@ class Field
 {
 public:
   Field() = default;
-  Field(const Table *table, const FieldMeta *field) : table_(table), field_(field) {}
+  //Field(const Table *table, const FieldMeta *field) : table_(table), field_(field) {}
+  Field(const Table *table, const FieldMeta *field, const AggrOp aggregation=AggrOp::AGGR_NONE):table_(table),field_(field),aggregation_(aggregation){}
   Field(const Field &) = default;
 
   const Table     *table() const { return table_; }
   const FieldMeta *meta() const { return field_; }
+  const AggrOp aggregation() const {return aggregation_;}
 
   AttrType attr_type() const { return field_->type(); }
 
@@ -47,4 +49,5 @@ public:
 private:
   const Table     *table_ = nullptr;
   const FieldMeta *field_ = nullptr;
+  AggrOp          aggregation_ = AggrOp::AGGR_NONE;
 };

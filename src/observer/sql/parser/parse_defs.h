@@ -17,6 +17,7 @@ See the Mulan PSL v2 for more details. */
 #include <string>
 #include <vector>
 #include <memory>
+#include <cstring>
 
 #include "sql/parser/value.h"
 
@@ -33,10 +34,28 @@ class Expression;
  * Rel -> Relation
  * Attr -> Attribute
  */
+
+ enum AggrOp
+ {
+  AGGR_SUM,
+  AGGR_AVG,
+  AGGR_MAX,
+  AGGR_MIN,
+  AGGR_COUNT,
+  AGGR_COUNT_ALL,
+  AGGR_NONE
+ };
+
+  AggrOp string_to_aggr(const std::string& str);
+
+ const std::string aggr_type_name[]={"sum","avg","max","min","count","count_all","none"};
+ const std::string aggr_to_string(AggrOp aggr_type,std::string aggr_str);
+
 struct RelAttrSqlNode
 {
   std::string relation_name;   ///< relation name (may be NULL) 表名
   std::string attribute_name;  ///< attribute name              属性名
+  AggrOp      aggregation=AGGR_NONE;
 };
 
 /**
