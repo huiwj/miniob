@@ -48,7 +48,7 @@ class Expression;
 
   AggrOp string_to_aggr(const std::string& str);
 
- const std::string aggr_type_name[]={"sum","avg","max","min","count","count_all","none"};
+ const std::string aggr_type_name[]={"sum","avg","max","min","count","count*","none"};
  const std::string aggr_to_string(AggrOp aggr_type,std::string aggr_str);
 
 struct RelAttrSqlNode
@@ -56,6 +56,7 @@ struct RelAttrSqlNode
   std::string relation_name;   ///< relation name (may be NULL) 表名
   std::string attribute_name;  ///< attribute name              属性名
   AggrOp      aggregation=AGGR_NONE;
+  bool valid = true;
 };
 
 /**

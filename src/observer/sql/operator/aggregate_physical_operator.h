@@ -31,6 +31,7 @@ public :
 
  Tuple * current_tuple () override 
  {
+    LOG_TRACE("return result tuple");
     return &result_tuple_;
  }
 

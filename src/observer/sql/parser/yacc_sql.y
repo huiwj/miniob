@@ -171,6 +171,8 @@ ArithmeticExpr *create_arithmetic_expression(ArithmeticExpr::Type type,
 %type <sql_node>            exit_stmt
 %type <sql_node>            command_wrapper
 %type <aggr_op>             aggr_op
+%type <rel_attr_list>       rel_attr_aggr_list
+%type <rel_attr>            rel_attr_aggr
 // commands should be a list but I use a single command instead
 %type <sql_node>            commands
 
@@ -526,6 +528,26 @@ select_attr:
     }
     ;
 
+
+rel_attr_aggr:
+  '*' {
+      $$ = new RelAttrSqlNode;
+      $$->relation_name = "";
+      $$->attribute_name = "*";
+  }
+  | ID {
+    $$ = new RelAttrSqlNode;
+    $$->attribute_name = $1;
+    free($1);
+  }
+  | ID DOT ID {
+    $$ = new RelAttrSqlNode;
+    $$->relation_name = $1;
+    $$->attribute_name = $3;
+    free($1);
+    free($3);
+  }
+
 rel_attr:
     ID {
       $$ = new RelAttrSqlNode;
@@ -539,9 +561,20 @@ rel_attr:
       free($1);
       free($3);
     }
-    |aggr_op LBRACE rel_attr RBRACE{
-      $$=$3;
-      $$->aggregation=$1;
+    |aggr_op LBRACE rel_attr_aggr rel_attr_aggr_list RBRACE {
+      $$ = $3;
+      $$->aggregation = $1;
+      if ($4 != nullptr){
+        $$->valid = false;
+        delete $4;
+      }
+    }
+    |aggr_op LBRACE  RBRACE{
+      $$ = new RelAttrSqlNode;
+      $$->relation_name = "";
+      $$->attribute_name = "";
+      $$->aggregation = $1;
+      $$->valid = false;
     }
     ;
   
@@ -553,6 +586,23 @@ rel_attr:
      |COUNT_F { $$=AGGR_COUNT; }
      ;
 
+rel_attr_aggr_list:
+    /* empty */
+    {
+      $$ = nullptr;
+    }
+    | COMMA rel_attr_aggr rel_attr_aggr_list{
+      if ($3 != nullptr) {
+      $$ = $3;
+    }
+    else {
+          $$ = new std::vector<RelAttrSqlNode>;
+         }
+
+         $$->emplace_back(*$2);
+         delete $2;
+         }
+         ;
 
 attr_list:
     /* empty */

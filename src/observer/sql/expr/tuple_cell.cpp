@@ -41,9 +41,14 @@ TupleCellSpec::TupleCellSpec(const char *table_name, const char *field_name, con
     }
     if(aggr!=AggrOp::AGGR_NONE)
     {
+      if (aggr == AggrOp::AGGR_COUNT_ALL)
+         alias_ = "count(*)";
+         else
+         {
       std::string aggr_repr;
       aggr_repr = aggr_to_string(aggr,aggr_repr);
       alias_=aggr_repr+"("+alias_+")";
+         }
     }
   }
 
@@ -60,9 +65,14 @@ TupleCellSpec::TupleCellSpec(const char *alias, const AggrOp aggr )
     alias_ = alias;
     if(aggr != AggrOp::AGGR_NONE)
     {
-      std::string aggr_repr;
-      aggr_repr = aggr_to_string(aggr,aggr_repr);
-      alias_=aggr_repr+"("+alias_+")";
+      if (aggr == AggrOp::AGGR_COUNT_ALL)
+         alias_ = "count(*)";
+         else
+         {
+           std::string aggr_repr;
+           aggr_repr = aggr_to_string(aggr,aggr_repr);
+           alias_=aggr_repr+"("+alias_+")";
+      }
     }
   }
 }
@@ -74,7 +84,7 @@ AggrOp string_to_aggr(const std::string& str)
     else if(str=="MAX") return AGGR_MAX;
     else if(str=="MIN") return AGGR_MIN;
     else if(str=="COUNT") return AGGR_COUNT;
-    else if(str=="COUNT_AVG") return AGGR_COUNT_ALL;
+    else if(str=="COUNT_ALL") return AGGR_COUNT_ALL;
     return AGGR_NONE;
   }
 

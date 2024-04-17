@@ -73,6 +73,8 @@ See the Mulan PSL v2 for more details. */
   DEFINE_RC(FILE_WRITE)                  \
   DEFINE_RC(VARIABLE_NOT_EXISTS)         \
   DEFINE_RC(VARIABLE_NOT_VALID)          \
+  DEFINE_RC(NESTED_AGGREGATION)          \
+  DEFINE_RC(AGGREGATION_UNMATCHED)          \
   DEFINE_RC(UNIMPLEMENT)                \
   DEFINE_RC(LOGBUF_FULL)
 
